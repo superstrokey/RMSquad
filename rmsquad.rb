@@ -116,6 +116,31 @@ end
 
 #=======================================================================================================#
 
+GITIGNORE_DATA =
+%{
+Data/
+System/
+Game*
+}
+
+GITATTRIBUTES_LFS =
+%{
+#Image
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+
+#Audio
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+
+#Video
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+}
+
 def setup(project)
     if project.initialized?
         launch project.folder
@@ -144,8 +169,14 @@ def setup(project)
                             f.write(settings.dump)
                         end
                         File.open(File.join(project.folder, ".gitattributes"), "a+") do |f|
+                            if settings.use_lfs
+                                f.write(GITATTRIBUTES_LFS)
+                            end
                         end
                         File.open(File.join(project.folder, ".gitignore"), "a+") do |f|
+                            unless settings.commit_data
+                                f.write(GITIGNORE_DATA)
+                            end
                         end
                         launch project.folder
                         close()
